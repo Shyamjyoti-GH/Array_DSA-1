@@ -248,4 +248,129 @@ Find the Union of two sorted Array:
     }
 
 Find the Missing Number in an Array:
-## Brute Force
+## Brute Force TC = O(n * m)
+    int missingNumber(vector<int>& nums) {
+        for(int i=0; i<=nums.size(); i++){
+            bool found= false;
+            for(int j=0; j<nums.size(); j++){
+                if(nums[j] == i) {
+                    found= true;
+                    break;
+                }
+            }
+            if(!found) return i;
+        }
+        return -1;
+    }
+## Average Solution TC= O(n) SC= O(n)
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> hash(n+1, 0); // presence array
+
+        for (int i = 0; i < n; i++) {
+            hash[nums[i]] = 1;
+        }
+
+        for (int i = 0; i <= n; i++) {
+            if (hash[i] == 0) return i;
+        }
+
+        return -1; 
+    }
+## Optimal Solution TC= O(n) SC= O(1)
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int sum = (n * (n + 1)) / 2; 
+        int s2 = 0;
+        for (int i = 0; i < n; i++) {
+            s2 += nums[i];
+        }
+        return sum - s2;
+    }
+
+    //Optimal solution Through XOR
+    
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int xor1 = 0, xor2 = 0;
+
+        // XOR of 1 to n
+        for (int i = 1; i <= n; i++) {
+            xor1 = xor1 ^ i;
+        }
+
+        // XOR of all elements in nums
+        for (int i = 0; i < n; i++) {
+            xor2 = xor2 ^ nums[i];
+        }
+
+        // Missing number
+        return xor1 ^ xor2;
+    }
+Maximum Consecutive Ones
+## Optimal Solution TC= O(n) 
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int maxi=0;
+        int count=0;
+        for(int i=0; i<nums.size(); i++){
+            if(nums[i] == 1){
+                count++;
+                maxi= max(maxi, count);
+            }
+            else count=0;
+        }
+        return maxi;
+    }
+Find the number that appears Twice and others once
+## Brute Force TC= O(n^2)
+    int singleNumber(vector<int>& nums) {
+        for (int i = 0; i < nums.size(); i++) {
+            int count = 0;
+            for (int j = 0; j < nums.size(); j++) {
+                if (nums[j] == nums[i]) count++;
+            }
+            if (count == 1) return nums[i];
+        }
+        return -1; 
+    }
+## Average Solution TC= O(n) SC= O(max value in array)
+    int singleNumber(vector<int>& nums) {
+        int maxi = nums[0];
+        for (int i = 0; i < nums.size(); i++) {
+            maxi = max(maxi, nums[i]);
+        }
+        
+        vector<int> hash(maxi + 1, 0);
+        
+        for (int i = 0; i < nums.size(); i++) {
+            hash[nums[i]]++;
+        }
+        
+        for (int i = 0; i < nums.size(); i++) {
+            if (hash[nums[i]] == 1) return nums[i];
+        }
+        
+        return -1; /
+    }
+## Optimised solution TC= O(N) SC= O(1)
+    //using Maps
+    int singleNumber(vector<int>& nums) {
+        map<int,int> mpp;
+        for (int i = 0; i < nums.size(); i++) {
+            mpp[nums[i]]++;
+        }
+        for (auto it : mpp) {
+            if (it.second == 1) return it.first;
+        }
+        return -1;
+    }
+    //using XOR 
+    int singleNumber(vector<int>& nums){
+        int xorr= 0;
+        for(int i=0; i<nums.size(); i++){
+            xorr = xorr ^ nums[i];
+        }
+        return xorr;
+    }
+Longest SubArray with given Sum K (positives)
+## Brute Force TC= O(
