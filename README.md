@@ -373,4 +373,99 @@ Find the number that appears Twice and others once
         return xorr;
     }
 Longest SubArray with given Sum K (positives)
-## Brute Force TC= O(
+## Brute Force TC= O(n^2)
+    int longestSubarrayBruteForce(vector<int>& nums, long long k) {
+        int n = nums.size();
+        int maxlen = 0;
+        for (int i = 0; i < n; i++) {
+            long long sum = 0;
+            for (int j = i; j < n; j++) {
+                sum += nums[j];
+                if (sum == k) {
+                    maxlen = max(maxlen, j - i + 1);
+                }
+            }
+        }
+        return maxlen;
+    }
+## Average Approach TC= O(n logn) SC= O(n)            //the Brute force and this Average one is for +ve and 0s
+    int longestSubarray(vector<int> &nums, long long k) {
+        map<long long, int> mpp;  
+        long long sum = 0;
+        int maxlen = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            sum += nums[i];
+            if (sum == k) {
+                maxlen = max(maxlen, i + 1);
+            }
+            long long rem = sum - k;
+            if (mpp.find(rem) != mpp.end()) {
+                int len = i - mpp[rem];
+                maxlen = max(maxlen, len);
+            }
+            if (mpp.find(sum) == mpp.end()) {
+                mpp[sum] = i;
+            }
+        }
+        return maxlen;
+    }
+## Optimal Approach TC= O(n) SC= O(1)            //this one is for both +ve and -ve numbers
+    int longestSubarray(vector<int> &nums, long long k){
+        int left=0, right=0;
+        long long sum= nums[0];
+        int maxlen= 0;
+        int n= nums.size();
+        while(right<n){
+            while(left<=right && sum>k){
+                sum-= nums[left];
+                left++;
+            }
+            if(sum == k){
+                maxlen= max(maxlen, right-left+1);
+            }
+            right++;
+            if(right<n) sum+=nums[right];
+        }
+        return maxlen;
+    }
+Two Sum
+## Brute Force TC= O(n^2)
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n= nums.size();
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                if(target == nums[i]+nums[j]){
+                    return {i,j};
+                }
+            }
+        }
+        return {};
+    }
+## Average Approach TC= O(n logn) SC= O(n)
+    vector<int> twoSum(vector<int>& nums, int target) {
+        map<int, int> mpp; // or unordered_map for O(1) average
+        int n = nums.size();
+
+        for (int i = 0; i < n; i++) {
+            int f = target - nums[i];
+            if (mpp.find(f) != mpp.end()) {
+                return {mpp[f], i};
+            }
+            mpp[nums[i]] = i;
+        }
+        return {};
+    }
+## Optimal Approach TC= O(n logn) SC= O(1)        //This is only optimised  for returning Yes/ No if two sum exists
+    string twoSumExists(vector<int>& nums, int target) {
+        int n = nums.size();
+        int left = 0, right = n - 1;
+        sort(nums.begin(), nums.end());
+
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) return "YES";
+            else if (sum < target) left++;
+            else right--;
+        }
+        return "NO";
+    }
