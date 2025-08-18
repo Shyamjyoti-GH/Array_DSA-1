@@ -469,3 +469,167 @@ Two Sum
         }
         return "NO";
     }
+Sort Array of 0's 1's and 2's
+## Brute Force TC= O(n logn) SC= O(n)        //Simply sorted using any sort (eg: Merge sort)
+    void Mergesort(vector<int>& nums, int left, int right){
+        if(left >= right) return;
+        int mid = (left+right)/2;
+        Mergesort(nums, left, mid);
+        Mergesort(nums, mid+1, right);
+        Merge(nums, left, mid, right);
+    }
+    void Merge(vector<int>& nums, int left, int mid, int right) {
+        vector<int> temp;
+        int i = left;       
+        int j = mid + 1;  
+        while (i <= mid && j <= right) {
+            if (nums[i] <= nums[j]) {
+                temp.push_back(nums[i]);
+                i++;
+            } else {
+                temp.push_back(nums[j]);
+                j++;
+            }
+        }
+        while (i <= mid) {
+            temp.push_back(nums[i]);
+            i++;
+        }
+        while (j <= right) {
+            temp.push_back(nums[j]);
+            j++;
+        }
+        for (int k = 0; k < temp.size(); k++) {
+            nums[left + k] = temp[k];
+        }
+    }
+    void sortZeroOneTwo(vector<int>& nums){
+        Mergesort(nums, 0, nums.size()-1);
+    }
+## Average Approach TC= O(2n) 
+    void sortZeroOneTwo(vector<int>& nums) {
+        int cnt0 = 0, cnt1 = 1, cnt2 = 2;
+        int n= nums.size();
+        for(int i=0; i<n; i++){
+            if(nums[i] == 0) cnt0++;
+            else if(nums[i] == 1) cnt1++;
+            else cnt2++;
+        }
+        for(int i=0; i<cnt0; i++) nums[i]= 0;
+        for(int i=cnt0; i<cnt0+cnt1; i++) nums[i]= 1;
+        for(int i=cnt0+cnt1; i<n; i++) nums[i]= 2;
+    }
+## Optimal Approach TC= O(n)        //Dutch National FLag Algorithn
+    void sortZeroOneTwo(vector<int>& nums) {
+        int n= nums.size();
+        int low=0, mid=0, high= n-1;
+        while(mid<=high){
+            if(nums[mid] == 0){
+                swap(nums[low], nums[mid]);
+                low++; mid++;
+            }
+            else if(nums[mid] == 1){
+                mid++;
+            }
+            else{       //(nums[mid] == 2)
+                swap(nums[mid], nums[high]);
+                high--;
+            }
+        }
+    }
+Majority Elements
+## Brute Force TC= O(n^2)
+    int majorityElement(vector<int>& nums) {
+        int n= nums.size();
+        for(int i=0; i<n; i++){
+            int cnt=0;
+            for(int j=0; j<n; j++){
+                if(nums[j] == nums[i]) cnt++;   
+            }
+            if(cnt>n/2) return nums[i];
+        }
+        return -1;
+    }
+## Better Approach TC= O(n logn) SC= O(n)
+    int majorityElement(vector<int>& nums) {
+        int n= nums.size();
+        map<int, int>mpp;                    //for map TC= nlogn for Unordered map TC = n
+        for(int i=0; i<n; i++){
+            mpp[nums[i]]++;
+        }
+        for(auto it: mpp){
+            if(it.second > n/2) return it.first;
+        }
+        return -1;
+    }
+## Optimised Approach TC= O(n)        //Moore Voting Algorithm
+    int majorityElement(vector<int>& nums) {
+        int n= nums.size();
+        int cnt=0;
+        int ele;
+        for(int i=0; i<n; i++){
+            if(cnt == 0){
+                cnt=1;
+                ele= nums[i];
+            }
+            else if(nums[i] == ele) cnt++;
+            else cnt--; 
+        }
+        return ele;
+    }
+Maximum SubArray Sum
+## Brute Force TC= O(n^3)
+    int maxSubArray(vector<int>& nums) {
+        int n= nums.size();
+        int maxi= INT_MIN;
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                int sum= 0;
+                for(int k=i; k<=j; k++){
+                    sum+= nums[k];
+                }  
+                maxi= max(maxi, sum);
+            }
+        }
+        return maxi;
+    }
+## Average Approach TC= O(n^2)
+    int maxSubArray(vector<int>& nums) {
+        int n= nums.size();
+        int maxi= INT_MIN;
+        for(int i=0; i<n; i++){
+            int sum= 0;
+            for(int j=i; j<n; j++){
+                sum+= nums[j];
+            }
+            maxi= max(maxi, sum);
+        }
+        return maxi;
+    }
+## Optimal Approach TC= O(n)        //Kadane Algorithm
+    int maxSubArray(vector<int>& nums) {
+        int n = nums.size();
+        int sum = 0;
+        int maxSum = INT_MIN;
+        int start = 0, ansStart = -1, ansEnd = -1;
+        for (int i = 0; i < n; i++) {
+            if (sum == 0) start = i;   
+            sum += nums[i];
+            if (sum > maxSum) {
+                maxSum = sum;
+                ansStart = start;
+                ansEnd = i;
+            }
+            if (sum < 0) {
+                sum = 0;   // reset if sum becomes negative
+            }
+        }
+        return maxSum;
+    }
+
+    //For printing the subarray
+    for (int i = ansStart; i <= ansEnd; i++) {
+        cout << nums[i];
+    }
+Stock Buy and Sell # Part I
+## Brute Force TC= O(
