@@ -697,3 +697,129 @@ Rearrange the Array in Alternate Positive and Negative items
         }
         return nums;
     }
+Next Permutation
+## TC= O(n)        //Longest Prefix Match and Dip finding
+    vector<int> nextPermutation(vector<int>& nums) {
+        int n= nums.size();
+        int ind= -1;
+        for(int i= n-2; i>= 0; i--){
+            if(nums[i]<nums[i+1]){
+                ind = i;
+                break;
+            }
+        }
+        if(ind == -1){
+            reverse(nums.begin(), nums.end());
+            return nums;
+        } 
+        for(int i= n-1; i> ind; i--){
+            if(nums[i] > nums[ind]){
+                swap(nums[i], nums[ind]);
+                break;
+            }
+        }
+        reverse(nums.begin()+ ind+1, nums.end());
+        return nums;
+    }
+Leaders in Array
+## Brute Force TC= O(n^2) 
+    vector<int> leaders(vector<int>& nums) {
+        int n= nums.size();
+        vector<int> ans;
+        for(int i=0; i<n; i++){
+            bool leader= true;
+            for(int j= i+1; j<n; j++){
+                if(nums[j]>nums[i]){
+                    leader = false;
+                    break;
+                }
+            }
+            if(leader == true) ans.push_back(nums[i]);
+        }
+        return ans;
+    }
+## Optimal Solution TC= O(n)
+    vector<int> leaders(vector<int>& nums) {
+        //O(N)
+        int n= nums.size();
+        vector<int> ans;
+        int maxi= INT_MIN;
+        //O(N)
+        for(int i=n-1; i>=0; i--){
+            if(nums[i]>=maxi){
+                ans.push_back(nums[i]);
+            }
+            maxi= max(maxi, nums[i]);
+        }
+        //O(N logN)
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+Longest Consecutive Sequence in an Array
+## Brute Force TC= O(n^2)
+    bool ls(vector<int>& nums, int val, int n){
+        for(int i=0; i<n; i++){
+            if(nums[i] == val) return true;
+        }
+        return false;
+    }
+    int longestConsecutive(vector<int>& nums) {
+        int n= nums.size();
+        if(n == 0) return 0;
+        int longest= 1;
+        int x,cnt=0;
+        for(int i=0; i<n; i++){
+            x= nums[i];
+            cnt=1;
+            while(ls(nums, x+1, n) == true){
+            x++;    //ls(nums, x+1) linear search is done for x+1 element in nums
+            cnt++;
+            }
+            longest= max(longest, cnt);
+        } 
+        return longest;
+    }
+## Average Approach TC= O(n logn)
+    int longestConsecutive(vector<int>& nums) {
+        int n= nums.size();
+        if(n == 0) return 0;
+        sort(nums.begin(), nums.end());
+        int lastsmaller= INT_MIN;
+        int cnt=0;
+        int longest =1;
+        for(int i=0; i<n; i++){
+            if(nums[i] -1 == lastsmaller){
+                cnt++;
+                lastsmaller= nums[i];
+            }
+            else if(lastsmaller != nums[i]){
+                cnt =1;
+                lastsmaller = nums[i];
+            }
+            longest= max(longest, cnt);
+        }
+        return longest;
+    }
+## Optimal Approach TC= O(n) SC= O(n)
+    int longestConsecutive(vector<int>& nums) {
+        int n= nums.size();
+        if(n == 0) return 0;
+        int longest= 1;
+        unordered_set<int> st;
+        for(int i=0; i<n; i++){
+            st.insert(nums[i]);
+        }
+        for(auto it: st){
+            if(st.find(it-1) == st.end()){  //to check if it dont have a smaller number than it in the sequence
+                int cnt =1;
+                int x = it;         //if it dont have a smaller number then its the start of the sequence as x
+                while(st.find(x+1) != st.end()){
+                    x = x+1;
+                    cnt++;
+                }
+                longest= max(longest, cnt);
+            }
+        }
+        return longest;
+    }
+    
