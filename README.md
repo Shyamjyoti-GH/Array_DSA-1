@@ -632,4 +632,68 @@ Maximum SubArray Sum
         cout << nums[i];
     }
 Stock Buy and Sell # Part I
-## Brute Force TC= O(
+## Brute Force TC= O(n)
+    int stockBuySell(vector<int> arr, int n){
+        int mini= arr[0];
+        int profit=0;
+        for(int i=0; i<n; i++){
+            int cost= arr[i]- mini;
+            profit= max(profit, cost);
+            mini= min(mini, arr[i]);
+        }
+        return profit;
+    }
+Rearrange the Array in Alternate Positive and Negative items
+## Brute Force TC= O(n) SC= O(n)
+    vector<int> rearrangeArray(vector<int>& nums) {
+        int n= nums.size();
+        vector<int> ans(n, 0);
+        int pos=0, neg=1;
+        for(int i=0; i<n; i++){
+            if(nums[i] < 0){
+                ans[neg] = nums[i];
+                neg += 2;
+            }
+            else{
+                ans[pos] = nums[i];
+                pos += 2;
+            }
+        }
+        return ans;
+    }
+## Optimal Solution TC=O(2n)
+    vector<int> rearrangeArray(vector<int>& nums) {
+        vector<int> pos, neg;
+        int n= nums.size();
+        //general case
+        for(int i=0; i<n; i++){
+            if(nums[i]<0){
+                neg.push_back(nums[i]);
+            }
+            else pos.push_back(nums[i]);
+        }
+        //this section is if either way pos>neg or neg>pos
+        if(pos.size()>neg.size()){
+            for(int i=0; i<neg.size(); i++){
+                nums[2*i]= pos[i];
+                nums[2*i+1] = neg[i];
+            }//now the remaining pos elements
+            int index= (neg.size()*2);
+            for(int i= neg.size(); i<pos.size(); i++){
+                nums[index] = pos[i];
+                index++;
+            }
+        }
+        else{
+            for(int i=0; i<pos.size(); i++){
+                nums[2*i]= pos[i];
+                nums[2*i+1]= neg[i];
+            }//now the remaining neg elements
+            int index= (pos.size()*2);
+            for(int i= pos.size(); i<neg.size(); i++){
+                nums[index] = neg[i];
+                index++;
+            }
+        }
+        return nums;
+    }
