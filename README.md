@@ -822,4 +822,167 @@ Longest Consecutive Sequence in an Array
         }
         return longest;
     }
-    
+Set Matrix Zeroes
+## Brute Force TC= O(n^3) 
+    void markRow(vector<vector<int>>& arr, int i, int m) {
+        for(int j=0; j<m; j++){
+            if(arr[i][j] != 0) arr[i][j] = -1;
+        }
+    }
+
+    void markCol(vector<vector<int>>& arr, int j, int n) {
+        for(int i=0; i<n; i++){
+            if(arr[i][j] != 0) arr[i][j] = -1;
+        }
+    }
+
+    void setZeroes(vector<vector<int>>& arr) {
+        int n = arr.size();
+        int m = arr[0].size();
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(arr[i][j] == 0){
+                    markRow(arr, i, m);
+                    markCol(arr, j, n);
+                }
+            }
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(arr[i][j] == -1) arr[i][j] = 0;
+            }
+        }
+    }
+## Average Approach TC= O(n^2) SC= O(n)
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<int> row(n, 0), col(m, 0);
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(matrix[i][j] == 0){
+                    row[i] = 1;
+                    col[j] = 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(row[i] || col[j]){
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+## Optimal Solution TC= O(n^2)
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        int col0 = 1;
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(matrix[i][j] == 0){
+                    matrix[i][0] = 0; // mark row
+                    if(j != 0) matrix[0][j] = 0; // mark col
+                    else col0 = 0;
+                }
+            }
+        }
+
+        for(int i = 1; i < n; i++){
+            for(int j = 1; j < m; j++){
+                if(matrix[i][0] == 0 || matrix[0][j] == 0){
+                    matrix[i][j] = 0; 
+                }
+            }
+        }
+
+        if(matrix[0][0] == 0){
+            for(int j = 0; j < m; j++) matrix[0][j] = 0;
+        }
+
+        if(col0 == 0){
+            for(int i = 0; i < n; i++) matrix[i][0] = 0;
+        }
+    }
+Rotate Matrix by 90 Degrees
+## Brute Force TC= O(n^2) SC= O(n^2)
+    void rotateMatrix(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        vector<vector<int>> ans(n, vector<int>(n));
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                ans[j][n - 1 - i] = matrix[i][j];
+            }
+        }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                matrix[i][j] = ans[i][j];
+            }
+        }
+    }
+## Optimised Approach TC= O(n^2)
+    void rotateMatrix(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        for(int i=0; i<n-1; i++){
+            for(int j= i+1; j<n; j++){
+                swap(matrix[i][j], matrix[j][i]);
+            }
+        }
+        for(int i=0; i<n; i++){
+            //reverse the rows i.e matrix[i]
+            reverse(matrix[i].begin(), matrix[i].end());
+        }
+    }
+Print the Matrix in Spiral Manner
+## Brute Force TC= O
+
+
+Count SubArrays with Given Sum
+## Brute Force TC= O(n^3)
+    int subarraySum(vector<int> &nums, int k) {
+        int n = nums.size();
+        int cnt = 0;
+        for(int i = 0; i < n; i++){
+            for(int j = i; j < n; j++){
+                int sum = 0;
+                for(int x = i; x <= j; x++){ 
+                    sum += nums[x];
+                }
+                if(sum == k) cnt++;
+            }
+        }
+        return cnt;
+    }
+## Better Approach TC= O(n^2)
+    int subarraySum(vector<int> &nums, int k) {
+        int n = nums.size();
+        int cnt = 0;
+        for(int i = 0; i < n; i++){
+            int sum = 0;
+            for(int j = i; j < n; j++){
+                sum += nums[j];
+                if(sum == k) cnt++;
+            }
+        }
+        return cnt;
+    }
+## Optimal Approach TC= O(n logn) SC= O(n)       //PREFIX SUM with hash map     //for unordered map its TC = O(n)
+    int subarraySum(vector<int> &nums, int k) {
+        int n = nums.size();
+        map<int, int> mpp;
+        mpp[0] = 1;
+        int prefixsum=0, cnt = 0;
+        for(int i=0; i<n; i++){
+            prefixsum+=nums[i];
+            int remove = prefixsum-k;
+            cnt+=mpp[remove];
+            mpp[prefixsum]+=1;
+        }
+        return cnt;
+    }
