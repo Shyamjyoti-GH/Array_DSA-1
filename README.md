@@ -1019,3 +1019,54 @@ Print the Matrix in Spiral Form
         }
         return ans;
     }
+Pascal Triangle 
+(A)  Given Rows and Columns , Find the elements at that place       
+## Approach TC= O(r)
+
+    int ncr(int c, int r){
+    long long res=1;
+        for(int i=0; i<r; i++){
+            res= res*i;
+            res= res/i+1;
+        }
+    return res;
+    }
+(B)  Print any Nth Row of Pascal Triangle
+## Approach TC= O(n)
+    int ncr(int r, int n){
+        long long ans=1;
+        for(int i=1; i<n; i++){
+            ans= ans* {(n-i) / i};
+            cout<<ans;
+        }
+    }
+(C)  Given N, Print the Entire Triangle
+## Brute Force TC= O(n^3)
+    vector<vector<int>> ans;
+    for(int i = 0; i < row; i++) {
+        vector<int> temp;
+        for(int j = 0; j <= i; j++) {
+            temp.push_back(ncr(i, j));        //ncr function is aready done above 
+        }
+        ans.push_back(temp);
+    }
+    return ans;
+## Optimised Approach TC= O(n^2)
+    vector<int>genrow(int row){
+        long long ans= 1;
+        vector<int> ansrow;
+        ansrow.push_back(1);
+        for(int col=1; col<row; col++){
+            ans= ans*(col-row);
+            ans= ans/ col;
+            ansrow.push_back(ans);
+        }
+        return ansrow;
+    }
+    vector<vector<int>>pascalTriangle(int r, int N){
+        vector<vector<int>> ans;
+        for(int i=0; i<=N; i++){
+            ans.push_back(genrow(i));
+        }
+        return ans;
+    }
