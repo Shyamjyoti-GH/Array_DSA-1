@@ -1133,4 +1133,164 @@ Majority Element of n/3
         return ls;
     }
 Three Sum 
+## Brute Force TC= O(n^3)
+    vector<vector<int>> threeSum(vector<int>& num) {
+        set<vector<int>>st;
+        int n= num.size();
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                for(int k= j+1; k<n; k++){
+                    if(num[i]+num[j]+num[k] == 0){
+                        vector<int>temp={num[i], num[j], num[k]};
+                        sort(temp.begin(), temp.end());
+                        st.insert(temp);
+                    }
+                }
+            }
+        }
+        vector<vector<int>> ans( st.begin(), st.end() );
+        return ans;
+    }
+## Better Approach TC= O(n^2 log m)    SC= O(n)
+    vector<vector<int>> threeSum(vector<int>& num) {
+        set<vector<int>>st;
+        int n= num.size();
+        for(int i=0; i<n; i++){
+            set<int> hashset;   //resetting the hashset after every i iteration
+            for(int j=i+1; j<n; j++){
+                int third= -(num[i] + num[j]);
+                if(hashset.find(third) != hashset.end()){
+                    vector<int> temp= {num[i], num[j], third};
+                    sort(temp.begin(), temp.end());
+                    st.insert(temp);
+                }
+                hashset.insert(num[j]);
+            }
+        }
+        vector<vector<int>> ans( st.begin(), st.end() );
+        return ans;
+    }
+## Optimal Approach TC= O(n^2) SC= O(1)        //Two pointer 
+    vector<vector<int>> threeSum(vector<int>& num) {
+        int n= num.size();
+        vector<vector<int>> ans;
+        sort(num.begin(), num.end());
+        for(int i=0; i<n; i++){
+            if(i>0 && num[i] == num[i-1]) continue;
+            int j= i+1;
+            int k= n-1;
+            while(j<k){
+                int sum= num[i]+ num[j] + num[k];
+                if(sum<0){
+                    j++;
+                }
+                else if(sum>0){
+                    k--;
+                }
+                else{
+                    vector<int> temp= {num[i], num[j], num[k]};
+                    ans.push_back(temp);
+                    j++;
+                    k--;
+                    while(j<k && num[j] == num[j-1]) j++;
+                    while(j<k && num[k] == num[k+1]) k--;
+                }
+            }
+        }
+        return ans;
+    }
+Four Sum
+## Brute Force TC= O(n^4) SC= O(no of terms * 2)
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n= nums.size();
+        set<vector<int>> st;
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                for(int k= j+1; k<n; k++){
+                    for(int l= k+1; l<n; l++){
+                        long long sum= nums[i] + nums[j];
+                        sum += nums[k];
+                        sum += nums[l];
+                        if(sum == target){
+                            vector<int> temp= {nums[i], nums[j], nums[k], nums[l]};
+                            sort(temp.begin(), temp.end());
+                            st.insert(temp);
+                        }
+                    }
+                }
+            }
+        }
+        vector<vector<int>> ans(st.begin(), st.end());
+        return ans;
+    }
+## Better Approach TC= O(n^3 logm) SC= O(n)
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n= nums.size();
+        set<vector<int>> st;
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                set<long long> hashset;
+                for(int k= j+1; k<n; k++){
+                    long long sum= nums[i] + nums[j];
+                    sum += nums[k];
+                    long long fourth= target- (sum);
+                    if(hashset.find(fourth) != hashset.end()){
+                        vector<int> temp= {nums[i], nums[j], nums[k], (int) fourth};
+                        sort(temp.begin(), temp.end());
+                        st.insert(temp);
+                    }
+                    hashset.insert(nums[k]);
+                }
+            }
+        }
+        vector<vector<int>> ans(st.begin(), st.end());
+        return ans;
+    }
+## Optimal Approach TC= O(n^3) 
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n= nums.size();
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> ans;
+        for(int i=0; i<n; i++){
+            if(i > 0 && nums[i] == nums[i-1]) continue;
+            for(int j=i+1; j<n; j++){
+                if(j != i+1 && nums[j] == nums[j-1]) continue;
+                int k= j+1;
+                int l= n-1;
+                while(k<l){
+                    long long sum= nums[i];
+                    sum+= nums[j];
+                    sum+= nums[k];
+                    sum+= nums[l];
+                    if(sum == target){
+                        vector<int> temp= {nums[i], nums[j], nums[k], nums[l]};
+                        ans.push_back(temp);
+                        k++; l--;
+                        while(k<l && nums[k] == nums[k-1]) k++;
+                        while(k<l && nums[l] == nums[l+1]) l--;
+                    }
+                    else if(sum< target) k++;
+                    else l--;
+                }
+            }
+        }
+        return ans;
+    }
+Longest Subarray with 0 Sum
+## Optimal Solution TC= O(n logn) SC= O(n) //keldane method 
+    int maxLen(vector<int>& arr) {
+        int n= arr.size();
+        unordered_map<int, int> mpp;
+        int maxi= 0, sum=0;
+        for(int i=0; i<n; i++){
+          sum+= arr[i];
+          if(sum == 0) maxi = i+1;
+          else{
+            if(mpp.find(sum) != mpp.end())maxi= max(maxi, i-mpp[sum]);
+            else mpp[sum] = i;
+          }
+        }
+        return maxi;
+    }
+Number of SubArrays with XOR k
 ## Brute Force TC= O
