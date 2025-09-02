@@ -1336,4 +1336,89 @@ Number of SubArrays with XOR k
         return cnt;
     }
 Merge Overlapping SubIntervals
+## Brute Force TC= O(n^2) SC= O(n)
+    vector<vector<int>> mergeOverlap(vector<vector<int>>& arr) {
+        int n= arr.size();
+        sort(arr.begin(), arr.end());
+        vector<vector<int>> ans;
+        for(int i=0; i<n; i++){
+          int start= arr[i][0];
+          int end= arr[i][1];
+          if(!ans.empty() && end<= ans.back()[1]){
+            continue;
+          }
+          for(int j=i+1; j<n; j++){
+            if(arr[j][0] <= end){
+              end = max(end, arr[j][1]);
+            }
+            else break;
+          }
+          ans.push_back({start, end});
+        }
+        return ans;
+    }
+## Optimal Approach TC= O(n logn) SC= O(n)
+    vector<vector<int>> mergeOverlap(vector<vector<int>>& arr) {
+        int n= arr.size();
+        sort(arr.begin(), arr.end());
+        vector<vector<int>> ans;
+        for(int i=0; i<n; i++){
+          if(ans.empty() || arr[i][0] > ans.back()[1]){
+            ans.push_back(arr[i]);
+          }
+          else ans.back()[1] = max(ans.back()[1], arr[i][1]);
+        }
+        return ans;
+    }
+Merge Two Sorted Arrays Without Extra Space
+## Optimal Approach 1 TC=O(n logm)
+    void merge(vector<int>& arr1, int m, vector<int>& arr2, int n) {
+        int left = n-1;
+        int right = 0;
+        while (left >= 0 && right < m) {
+            if (arr1[right] > arr2[left]) {
+                swap(arr1[right], arr2[left]);
+            }
+            left--;
+            right++;
+        }
+        sort(arr1.begin(), arr1.begin() + m);
+        sort(arr2.begin(), arr2.begin() + n);
+    }
+## Optimal Approach 2 using GAP Method from SHELL SORT TC= O(n+m) + (log n+m)
+    class Solution {
+    private: 
+        void swapIfGreater(vector<int>& arr1, vector<int>& arr2, int ind1, int ind2){
+            if(arr1[ind1] > arr2[ind2]){
+                swap(arr1[ind1], arr2[ind2]);
+            }
+        }
+    public:
+        void merge(vector<int>& arr1, int m, vector<int>& arr2, int n) {
+            int len= (n+m);
+            int gap= (len/2) + (len%2);
+            while(gap>0){
+                int left= 0;
+                int right= left+gap;
+                while(right<left){
+                    //arr1 and arr2 both
+                    if(left<n && right>=n){
+                        swapIfGreater(arr1, arr2, left, right-n);
+                    }
+                    //both at arr2
+                    else if(left>=n){
+                        swapIfGreater(arr2, arr2, left-n, right-n);
+                    }
+                    //both at arr1 
+                    else{
+                        swapIfGreater(arr1, arr1, left, right);
+                    }
+                    left++, right++;
+                }
+                if(gap == 1) break;
+                gap= (gap/2) + (gap%2);
+            }
+        }
+    };
+Find Repeating and Missing Number
 ## Brute Force TC= O(
