@@ -1293,4 +1293,47 @@ Longest Subarray with 0 Sum
         return maxi;
     }
 Number of SubArrays with XOR k
-## Brute Force TC= O
+## Brute Force TC= O(n^3)
+    int subarraysWithXorK(vector<int> &nums, int k) {
+        int n= nums.size();
+        int cnt=0;
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                int xr=0;
+                for(int p=i; p<=j; p++){
+                    xr= xr^nums[p];
+                }
+                if(xr == k) cnt++;
+            }
+        }
+        return cnt;
+    }
+## Better Approach TC= O(n^2)
+    int subarraysWithXorK(vector<int> &nums, int k) {
+        int n= nums.size();
+        int cnt=0;
+        for(int i=0; i<n; i++){
+            int xr=0;
+            for(int j=i; j<n; j++){
+                xr= xr^nums[j];
+                if(xr == k) cnt++;
+            }
+        }
+        return cnt;
+    }
+## Optimised Approach TC= O(n logn) SC= O(n)
+    int subarraysWithXorK(vector<int> &nums, int k) {
+        int xr=0;
+        int cnt=0;
+        map<int, int> mpp;
+        mpp[xr]++;
+        for(int i=0; i<nums.size(); i++){
+            xr= xr^nums[i];
+            int x= xr^k;
+            cnt= cnt + mpp[x];
+            mpp[xr]++;
+        }
+        return cnt;
+    }
+Merge Overlapping SubIntervals
+## Brute Force TC= O(
