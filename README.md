@@ -1421,4 +1421,138 @@ Merge Two Sorted Arrays Without Extra Space
         }
     };
 Find Repeating and Missing Number
+## Brute Force TC= O(n^2)
+    vector<int> findMissingRepeatingNumbers(vector<int> nums) {
+        int n = nums.size();
+        int repeating = -1, missing = -1;
+        for(int i = 1; i <= n; i++){  
+            int cnt = 0;
+            for(int j = 0; j < n; j++) if(nums[j] == i) cnt++;
+            if(cnt == 2) repeating = i;
+            else if(cnt == 0) missing = i;
+            if(repeating != -1 && missing != -1) break;
+        }
+        return {repeating, missing};
+    }
+## Better Approach TC= O(2n) SC= O(n)
+    vector<int> findMissingRepeatingNumbers(vector<int> nums) {
+        int n = nums.size();
+        int repeating = -1, missing = -1;
+        int (hash[n+1])= {0};
+        for(int i=0; i<n; i++) hash(nums[i])++;
+        for(int i=1; i<=n; i++){
+            if(hash[i] == 2) repeating =i;
+            else if(hash[i] == 0) missing =i;
+            if(repeating != -1 && missing != -1) break;
+        }
+        return {repeating, missing};
+    }
+## Optimal Approach TC= O(n)
+    vector<int> findMissingRepeatingNumbers(vector<int> nums) {
+        long long n= nums.size();
+        // s- sn= x-y
+        //S2- S2N
+        long long SN= n*(n+1)/2;
+        long long S2N= n*(n+1)*(2*n+1)/6;
+        long long S=0, S2=0;
+        for(int i=0; i<n; i++){
+            S+= nums[i];
+            S2+= (long long)nums[i] * (long long)nums[i];
+        }
+        long long val1= S-SN;
+        long long val2= S2- S2N;
+        val2= val2/val1;
+        long long x= (val1+val2)/2;
+        long long y= x- val1;
+        return{(int)x, (int)y};        
+    }
+## Optimal Solution #2 TC= O(4n)        using XOR
+    vector<int> findMissingRepeatingNumbers(vector<int> nums) {
+        long long n= nums.size();
+        int xr=0;
+        for(int i=0; i<n; i++){
+            xr= xr^nums[i];
+            xr= xr^(i+1);
+        }        
+        int bitno=0;
+        while(1){
+            if((xr & (1<<bitno)) != 0) break;
+            bitno++;
+        }
+        int zero=0;
+        int one=0;
+        for(int i=0; i<n; i++){
+            if((nums[i] & (1<<bitno)) != 0) one = one^ nums[i]; //part of oneth club
+            else zero= zero^nums[i];    //zeroth club
+        }
+        int cnt=0;
+        for(int i=0; i<n; i++){
+            if(nums[i] == zero) cnt++;
+        }
+        if(cnt == 2) return {zero, one};
+        return {one, zero};
+    }
+Count Inversions
+## Brute Force TC= O(n^2)
+    long long int numberOfInversions(vector<int> nums) {
+        long long cnt=0;
+        int n= nums.size();
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                if(nums[i] > nums[j]) cnt++;
+            }
+        }
+        return cnt;
+## Optimal Approach TC= O(n logn) SC= O(n)
+    class Solution {
+    public:
+        int merge(vector<int>& arr, int low, int mid, int high) {
+            vector<int> temp;
+            int left = low;
+            int right = mid + 1;
+            int cnt=0;
+            while (left <= mid && right <= high) {
+                if (arr[left] <= arr[right]) {
+                    temp.push_back(arr[left]);
+                    left++;
+                } else {
+                    temp.push_back(arr[right]);
+                    cnt += (mid - left + 1); // count inversions
+                    right++;
+                }
+            }
+
+        while (left <= mid) {
+            temp.push_back(arr[left]);
+            left++;
+        }
+        while (right <= high) {
+            temp.push_back(arr[right]);
+            right++;
+        }
+
+        for (int i = low; i <= high; i++) {
+            arr[i] = temp[i - low];
+        }
+        return cnt;
+    }
+
+        int mergeSort(vector<int>& arr, int low, int high) {
+            int cnt=0;
+            if (low >= high) return cnt;
+            int mid = (low + high) / 2;
+            cnt += mergeSort(arr, low, mid);
+            cnt += mergeSort(arr, mid + 1, high);
+            cnt += merge(arr, low, mid, high);
+            return cnt;
+        }
+    
+        long long int numberOfInversions(vector<int> arr) {
+            int n = arr.size();
+            return mergeSort(arr, 0, n - 1);
+        }
+    };
+Reverse Pairs
 ## Brute Force TC= O(
+    
+## Optimal Approach TC= O(
