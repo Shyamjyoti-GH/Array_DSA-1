@@ -1553,6 +1553,98 @@ Count Inversions
         }
     };
 Reverse Pairs
-## Brute Force TC= O(
-    
-## Optimal Approach TC= O(
+## Brute Force TC= O(n^2)
+    int reversePairs(vector<int>& nums) {
+        int n= nums.size();
+        int cnt= 0;
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                if(nums[i]> 2* nums[j]) cnt++;
+            }
+        }
+        return cnt;
+    }
+## Optimal Approach TC= O(n logn) SC= O(n)'
+    int merge(vector<int>& arr, int low, int mid, int high) {
+        vector<int> temp;
+        int left = low;
+        int right = mid + 1;
+        int cnt=0;
+        while (left <= mid && right <= high) {
+            if (arr[left] <= arr[right]) {
+                temp.push_back(arr[left]);
+                left++;
+            } else {
+                temp.push_back(arr[right]);
+                cnt +=(mid - left + 1); 
+                right++;
+            }
+        }
+
+    while (left <= mid) {
+        temp.push_back(arr[left]);
+        left++;
+    }
+    while (right <= high) {
+        temp.push_back(arr[right]);
+        right++;
+    }
+
+    for (int i = low; i <= high; i++) {
+        arr[i] = temp[i - low];
+    }
+    return cnt;
+    }
+        int countpairs(vector<int>& arr, int low, int mid, int high){
+            int right= mid+1;
+            int cnt=0;
+            for(int i=low; i<=mid; i++){
+                while(right<=high && arr[i]> 2* arr[right]) right++;
+                cnt+= right-(mid + 1);
+            }
+            return cnt;
+        }
+        int mergeSort(vector<int>& arr, int low, int high) {
+            int cnt=0;
+            if (low >= high) return cnt;
+            int mid = (low + high) / 2;
+            cnt += mergeSort(arr, low, mid);
+            cnt += mergeSort(arr, mid + 1, high);
+            cnt += countpairs(arr, low, mid, high);
+            merge(arr, low, mid, high);
+            return cnt;
+        }
+        int reversePairs(vector<int>& arr) {
+            int n= arr.size();
+            return mergeSort(arr, 0, n-1);
+        }
+Maximum Product SubArray in an Array
+## Brute Force TC= O(n^3) 
+    int maxProduct(vector<int>& nums) {
+        int maxi= INT_MIN;
+        int n= nums.size();
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                int product=1;
+                for(int k=i; k<=j; k++){
+                    product= product*nums[k];
+                }
+                maxi= max(maxi, product);
+            }
+        }
+        return maxi;
+    }
+## Optimal Approach TC= O(n)
+    int maxProduct(vector<int>& nums) {
+        int n= nums.size();
+        int pre=1, suff=1;
+        int ans= INT_MIN;
+        for(int i=0; i<n; i++){
+            if(pre == 0) pre=1;
+            if(suff == 0) suff=1;
+            pre= pre* nums[i];
+            suff= suff* nums[n-i-1];
+            ans= max(ans, max(pre, suff));
+        }
+        return ans;
+    }
